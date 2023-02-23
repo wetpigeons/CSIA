@@ -71,7 +71,7 @@ public class Main {
 
         cal = Calendar.getInstance();
 
-        JLabel dayNumber = new JLabel();
+        JLabel dayNumber;
 
         int index = 1;
 
@@ -90,14 +90,13 @@ public class Main {
             for(int i = 0; i < 7; i++){ //Days - columns
                 c.gridx = i;
                 temp = new JPanel(new GridBagLayout());
-                dayNumber.setText(String.valueOf(index));
-                temp.add(dayNumber,c1);
-
-                temp.setBorder(BorderFactory.createLineBorder(Color.black));
-                calendar.add(temp, c);
                 if(index<31) {
+                    dayNumber = new JLabel(String.valueOf(index));
+                    temp.add(dayNumber,c1);
                     index++;
                 }
+                temp.setBorder(BorderFactory.createLineBorder(Color.black));
+                calendar.add(temp, c);
                 }
             }
         }
