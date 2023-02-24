@@ -11,6 +11,7 @@ public class Main {
     static JPanel workouts;
     static JTabbedPane tabs;
     static Calendar cal = Calendar.getInstance();
+    static int monthDif;
 
     public static void main(String[] args) {
 
@@ -52,7 +53,8 @@ public class Main {
 
         c.ipady = 50;
         c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = 7;
+        c.gridx=1;
+        c.gridwidth = 5;
         calendar.add(temp, c); //Month
 
         c.gridwidth = 1;
@@ -118,5 +120,21 @@ public class Main {
                 calendar.add(temp, c);
             }
         }
+        c.ipadx=0;
+        c.ipady=0;
+        c.anchor = GridBagConstraints.CENTER;
+        c.weighty=0;
+        c.weightx=0;
+        c.insets= new Insets(15,15,15,15);
+        c.gridy=0;
+        c.gridx=0;
+        JButton left = new JButton("Previous Month");
+        left.addActionListener(e -> {monthDif--; initializeCalendar();});
+        calendar.add(left,c);
+        JButton right = new JButton("Next Month");
+        right.addActionListener(e -> {monthDif++; initializeCalendar();});
+        c.gridx=6;
+        calendar.add(right,c);
+
     }
 }
