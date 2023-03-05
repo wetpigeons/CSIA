@@ -94,17 +94,17 @@ public class Main {
             for (int i = 0; i < 7; i++) { //Days - columns
                 c.gridx = i;
                 temp = new JPanel(new GridBagLayout());
-                if (index <= daysOfPrevious && prevMonth) { //previous month
+                if (index > daysOfPrevious && prevMonth) {
+                    prevMonth = false;
+                    currentMonth = true;
+                    index = 1;
+                }
+                else if (index <= daysOfPrevious && prevMonth) { //previous month
                     temp.setBackground(Color.gray);
                     dayNumber = new JLabel(String.valueOf(index));
                     temp.add(dayNumber, c1);
                     index++;
-                    if (index > daysOfPrevious) {
-                        prevMonth = false;
-                        currentMonth = true;
-                        index = 1;
-                    }
-                } else if (index <= days && currentMonth) { //current month
+                } if (index <= days && currentMonth) { //current month
                     dayNumber = new JLabel(String.valueOf(index));
                     temp.add(dayNumber, c1);
                     index++;
@@ -121,7 +121,6 @@ public class Main {
                 }
 
                 if (index == cal.DAY_OF_MONTH && monthDif==0) {
-//                    temp.setBorder(BorderFactory.createLineBorder(Color.red));
                     temp.setBackground(Color.decode("#FFA591"));
                 } else {
                     temp.setBorder(BorderFactory.createLineBorder(Color.black));
