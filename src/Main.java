@@ -8,6 +8,7 @@ import static java.util.Calendar.MONTH;
 
 public class Main {
     static JFrame frame = new JFrame();
+    static JFrame newEvent;
     static JPanel calendar;
     static JPanel toDo;
     static JPanel workouts;
@@ -15,8 +16,8 @@ public class Main {
     static Calendar cal;
     static int monthDif = 0;
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    static int width = (int)screenSize.getWidth();
-    static int height = (int)screenSize.getHeight();
+    static int width = (int) screenSize.getWidth();
+    static int height = (int) screenSize.getHeight();
 
 
     public static void main(String[] args) {
@@ -27,6 +28,7 @@ public class Main {
         --To-Do is a checklist, customizable
         --Workouts can save different swing text boxes or something, clicking a workout will change the visible text box - maybe scrollable list on left, text on right
          */
+        initializeNewEvent();
         initializeFrame();
 
     }
@@ -98,13 +100,13 @@ public class Main {
                     prevMonth = false;
                     currentMonth = true;
                     index = 1;
-                }
-                else if (index <= daysOfPrevious && prevMonth) { //previous month
+                } else if (index <= daysOfPrevious && prevMonth) { //previous month
                     temp.setBackground(Color.gray);
                     dayNumber = new JLabel(String.valueOf(index));
                     temp.add(dayNumber, c1);
                     index++;
-                } if (index <= days && currentMonth) { //current month
+                }
+                if (index <= days && currentMonth) { //current month
                     dayNumber = new JLabel(String.valueOf(index));
                     temp.add(dayNumber, c1);
                     index++;
@@ -120,62 +122,111 @@ public class Main {
                     index++;
                 }
 
-                if (index == cal.DAY_OF_MONTH && monthDif==0) {
+                if (index == cal.DAY_OF_MONTH && monthDif == 0) {
                     temp.setBackground(Color.decode("#FFA591"));
                 } else {
                     temp.setBorder(BorderFactory.createLineBorder(Color.black));
                 }
                 calendar.add(temp, c);
             }
-        }
-                c.ipadx = 0;
-                c.ipady = 0;
-                c.anchor = GridBagConstraints.CENTER;
-                c.weighty = 0;
-                c.weightx = 0;
-                c.insets = new Insets(15, 15, 15, 15);
-                c.gridy = 0;
-                c.gridx = 0;
-                JButton left = new JButton("Previous Month");
-                left.addActionListener(e -> {
-                    monthDif--;
-                    initializeFrame();
-                });
-                calendar.add(left, c);
-                JButton right = new JButton("Next Month");
-                right.addActionListener(e -> {
-                    monthDif++;
-                    initializeFrame();
-                });
-                c.gridx = 6;
-                calendar.add(right, c);
-                System.out.println(monthDif);
-            }
+        } //grids
+        c.ipadx = 0;
+        c.ipady = 0;
+        c.anchor = GridBagConstraints.CENTER;
+        c.weighty = 0;
+        c.weightx = 0;
+        c.insets = new Insets(15, 15, 15, 15);
+        c.gridy = 0;
+        c.gridx = 0;
+        JButton left = new JButton("Previous Month");
+        left.addActionListener(e -> {
+            monthDif--;
+            initializeFrame();
+        });
+        calendar.add(left, c);
+        JButton right = new JButton("Next Month");
+        right.addActionListener(e -> {
+            monthDif++;
+            initializeFrame();
+        });
+        c.gridx = 6;
+        calendar.add(right, c);
 
-            public static void initializeCal(){
-                cal = Calendar.getInstance();
-                cal.set(MONTH,cal.get(MONTH)+monthDif);
-                System.out.println(cal.get(MONTH));
-            }
-            public static void initializeFrame(){
-                frame.setVisible(false);
-                frame.removeAll();
-                frame = new JFrame();
-                initializeCalendar();
 
-                toDo = new JPanel();
-                workouts = new JPanel();
-                tabs = new JTabbedPane();
+        c.gridx = 0;
+        c.gridy = 7;
+        JButton newEvent = new JButton("Create New Event");
+        calendar.add(newEvent, c);
+        newEvent.addActionListener(e -> createNewEvent());
+    }
 
-                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                frame.setSize(width, height);
+    public static void initializeNewEvent() {
+        Calendar today = Calendar.getInstance();
+        int dayNumber = today.get(Calendar.DAY_OF_MONTH);
+        int yearNumber = today.get(Calendar.YEAR);
+        int monthNumber = today.get(Calendar.MONTH);
 
-                frame.add(tabs);
+        newEvent = new JFrame();
+        newEvent.setSize(350,125);
+        newEvent.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        newEvent.setLocationRelativeTo(null);
+        JButton create = new JButton("Create New Task");
+        JButton cancel = new JButton("Cancel");
+        SpinnerModel dayModel = new SpinnerNumberModel(dayNumber,1,31,1);
+        SpinnerModel monthModel = new SpinnerNumberModel(monthNumber+1,1,12,1);
+        SpinnerModel yearModel = new SpinnerNumberModel(yearNumber,yearNumber-100,yearNumber+100,1);
+        JSpinner year = new JSpinner(yearModel);
+        JSpinner month = new JSpinner(monthModel);
+        JSpinner day = new JSpinner(dayModel);
+        JLabel yearLabel = new JLabel("Year:");
+        JLabel monthLabel = new JLabel("Month:");
+        JLabel dayLabel = new JLabel("Day:");
+        JLabel eventLabel = new JLabel("Event:");
+        JTextField event = new JTextField("",20);
+        JPanel newEventPanel = new JPanel();
 
-                tabs.addTab("Calendar", calendar);
-                tabs.addTab("To-Do List", toDo);
-                tabs.addTab("Saved Workouts", workouts);
+        cancel.addActionListener(e -> newEvent.setVisible(false));
+        create.addActionListener(e -> new Item((int)month.getValue(),(int)day.getValue(),(int)year.getValue(),event.getText()));
+        newEventPanel.add(monthLabel);
+        newEventPanel.add(month);
+        newEventPanel.add(dayLabel);
+        newEventPanel.add(day);
+        newEventPanel.add(yearLabel);
+        newEventPanel.add(year);
+        newEventPanel.add(eventLabel);
+        newEventPanel.add(event);
+        newEventPanel.add(cancel);
+        newEventPanel.add(create);
+        newEvent.add(newEventPanel);
+    }
+    public static void createNewEvent(){
+        newEvent.setVisible(true);
+    }
 
-                frame.setVisible(true);
-            }
-        }
+    public static void initializeCal() {
+        cal = Calendar.getInstance();
+        cal.set(MONTH, cal.get(MONTH) + monthDif);
+    }
+
+    public static void initializeFrame() {
+        frame.setVisible(false);
+        frame.removeAll();
+        frame = new JFrame();
+        initializeCalendar();
+
+        toDo = new JPanel();
+        workouts = new JPanel();
+        tabs = new JTabbedPane();
+
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(width, height);
+
+        frame.add(tabs);
+
+        tabs.addTab("Calendar", calendar);
+        tabs.addTab("To-Do List", toDo);
+        tabs.addTab("Saved Workouts", workouts);
+
+        frame.setVisible(true);
+    }
+}
