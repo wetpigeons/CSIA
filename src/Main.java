@@ -1,10 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.time.DayOfWeek;
-import java.time.MonthDay;
 import java.util.*;
-
-import static java.util.Calendar.MONTH;
 
 public class Main {
     static JFrame frame = new JFrame();
@@ -18,10 +14,10 @@ public class Main {
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     static int width = (int) screenSize.getWidth();
     static int height = (int) screenSize.getHeight();
-
+    static ArrayList<Item> items = new ArrayList<>();
 
     public static void main(String[] args) {
-
+        items.add(new Item(3,15,2023,"test","test"));
         /*
         --Tabs at top: Calendar, To-Do, Workouts
         -- Calendar has clickable items (links?) to to-do or workouts
@@ -39,9 +35,10 @@ public class Main {
         JPanel temp;
         GridBagConstraints c = new GridBagConstraints();
         GridBagConstraints c1 = new GridBagConstraints();
+        GridBagConstraints c2= new GridBagConstraints();
 
         temp = new JPanel();
-        JLabel month = new JLabel(cal.getDisplayName(MONTH, 2, Locale.US));
+        JLabel month = new JLabel(cal.getDisplayName(Calendar.MONTH, 2, Locale.US));
         temp.add(month);
         temp.setBorder(BorderFactory.createLineBorder(Color.black));
 
@@ -70,7 +67,7 @@ public class Main {
 
         int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        cal.set(MONTH, cal.get(MONTH) - 1);
+        cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - 1);
         int daysOfPrevious = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
         initializeCal();
 
@@ -86,6 +83,10 @@ public class Main {
         c1.weightx = 0.1;
         c1.weighty = 0.1;
         c1.anchor = GridBagConstraints.FIRST_LINE_START;
+
+        c2.anchor = GridBagConstraints.FIRST_LINE_START;
+        c2.weightx=0.8;
+        c2.weighty=0.8;
 
         boolean prevMonth = true;
         boolean currentMonth = false;
@@ -122,10 +123,15 @@ public class Main {
                     index++;
                 }
 
-                if (index == cal.DAY_OF_MONTH && monthDif == 0) {
+                if (index == Calendar.DAY_OF_MONTH && monthDif == 0) {
                     temp.setBackground(Color.decode("#FFA591"));
                 } else {
                     temp.setBorder(BorderFactory.createLineBorder(Color.black));
+                }
+                for(Item p: items){
+                    if((p.day == index-1 && p.month == cal.get(Calendar.MONTH)+1) && p.year == cal.get(Calendar.YEAR)){
+                        temp.add(new JLabel(p.event),c2);
+                    }
                 }
                 calendar.add(temp, c);
             }
@@ -152,7 +158,6 @@ public class Main {
         c.gridx = 6;
         calendar.add(right, c);
 
-
         c.gridx = 0;
         c.gridy = 7;
         JButton newEvent = new JButton("Create New Event");
@@ -167,7 +172,7 @@ public class Main {
         int monthNumber = today.get(Calendar.MONTH);
 
         newEvent = new JFrame();
-        newEvent.setSize(350,125);
+        newEvent.setSize(350,180);
         newEvent.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         newEvent.setLocationRelativeTo(null);
         JButton create = new JButton("Create New Event");
@@ -181,12 +186,14 @@ public class Main {
         JLabel yearLabel = new JLabel("Year:");
         JLabel monthLabel = new JLabel("Month:");
         JLabel dayLabel = new JLabel("Day:");
-        JLabel eventLabel = new JLabel("Event:");
+        JLabel eventLabel = new JLabel("Event Name:");
+        JLabel descriptionLabel = new JLabel("Description: ");
         JTextField event = new JTextField("",20);
+        JTextArea description = new JTextArea("",3,20);
         JPanel newEventPanel = new JPanel();
 
         cancel.addActionListener(e -> newEvent.setVisible(false));
-        create.addActionListener(e -> new Item((int)month.getValue(),(int)day.getValue(),(int)year.getValue(),event.getText()));
+        create.addActionListener(e -> items.add(new Item((int)month.getValue(),(int)day.getValue(),(int)year.getValue(),event.getText(),description.getText())));
         newEventPanel.add(monthLabel);
         newEventPanel.add(month);
         newEventPanel.add(dayLabel);
@@ -195,6 +202,8 @@ public class Main {
         newEventPanel.add(year);
         newEventPanel.add(eventLabel);
         newEventPanel.add(event);
+        newEventPanel.add(descriptionLabel);
+        newEventPanel.add(description);
         newEventPanel.add(cancel);
         newEventPanel.add(create);
         newEvent.add(newEventPanel);
@@ -205,7 +214,7 @@ public class Main {
 
     public static void initializeCal() {
         cal = Calendar.getInstance();
-        cal.set(MONTH, cal.get(MONTH) + monthDif);
+        cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + monthDif);
     }
 
     public static void initializeFrame() {

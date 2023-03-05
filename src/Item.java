@@ -1,14 +1,16 @@
 public class Item {
-    public static int year;
-    public static int month;
-    public static int day;
-    public static String event;
+    public  int year;
+    public  int month;
+    public int day;
+    public  String event;
+    public  String description;
 
-    public Item(int month, int day, int year, String event){
+    public Item(int month, int day, int year, String event, String description){
         this.month = month;
         this.day = day;
         this.year = year;
         this.event = event;
-        System.out.println("New Event: " + month + "/" + day + "/"+year+"   "+event);
+        this.description = description;
+        System.out.println("New Event: " + month + "/" + day + "/"+year+"   "+event + ": " + description);
     }
 }
