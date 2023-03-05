@@ -170,7 +170,7 @@ public class Main {
         newEvent.setSize(350,125);
         newEvent.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         newEvent.setLocationRelativeTo(null);
-        JButton create = new JButton("Create New Task");
+        JButton create = new JButton("Create New Event");
         JButton cancel = new JButton("Cancel");
         SpinnerModel dayModel = new SpinnerNumberModel(dayNumber,1,31,1);
         SpinnerModel monthModel = new SpinnerNumberModel(monthNumber+1,1,12,1);
