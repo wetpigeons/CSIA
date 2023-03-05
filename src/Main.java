@@ -4,14 +4,16 @@ import java.time.DayOfWeek;
 import java.time.MonthDay;
 import java.util.*;
 
+import static java.util.Calendar.MONTH;
+
 public class Main {
     static JFrame frame;
     static JPanel calendar;
     static JPanel toDo;
     static JPanel workouts;
     static JTabbedPane tabs;
-    static Calendar cal = Calendar.getInstance();
-    static int monthDif;
+    static Calendar cal;
+    static int monthDif = 0;
 
     public static void main(String[] args) {
 
@@ -42,18 +44,20 @@ public class Main {
 
     public static void initializeCalendar() {
         calendar = new JPanel(new GridBagLayout());
+//        initializeCal();
+        cal = Calendar.getInstance();
         JPanel temp;
         GridBagConstraints c = new GridBagConstraints();
         GridBagConstraints c1 = new GridBagConstraints();
 
         temp = new JPanel();
-        JLabel month = new JLabel(cal.getDisplayName(Calendar.MONTH, 2, Locale.US));
+        JLabel month = new JLabel(cal.getDisplayName(MONTH, 2, Locale.US));
         temp.add(month);
         temp.setBorder(BorderFactory.createLineBorder(Color.black));
 
         c.ipady = 50;
         c.fill = GridBagConstraints.BOTH;
-        c.gridx=1;
+        c.gridx = 1;
         c.gridwidth = 5;
         calendar.add(temp, c); //Month
 
@@ -76,15 +80,12 @@ public class Main {
 
         int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) - 1);
+        cal.set(MONTH, cal.get(MONTH) - 1);
         int daysOfPrevious = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
         cal = Calendar.getInstance();
 
         JLabel dayNumber;
         int index = daysOfPrevious - startIndex + 2;
-        System.out.println(daysOfPrevious);
-        System.out.println(startIndex);
-        System.out.println(index);
 
         c.ipady = 100;
         c.ipadx = 100;
@@ -97,6 +98,8 @@ public class Main {
         c1.anchor = GridBagConstraints.FIRST_LINE_START;
 
         boolean prevMonth = true;
+        boolean currentMonth = false;
+        boolean nextMonth = false;
 
         for (int j = 2; j < 7; j++) { //rows
             c.gridy = j;
@@ -104,37 +107,64 @@ public class Main {
                 c.gridx = i;
                 temp = new JPanel(new GridBagLayout());
                 if (index <= daysOfPrevious && prevMonth) { //previous month
+                    temp.setBackground(Color.gray);
                     dayNumber = new JLabel(String.valueOf(index));
                     temp.add(dayNumber, c1);
                     index++;
-                } else if (prevMonth){ //change to current month
-                    prevMonth = false;
-                    index = 1;
-                }
-                if (index <= days && !prevMonth) { //current month
+                    if (index > daysOfPrevious) {
+                        prevMonth = false;
+                        currentMonth = true;
+                        index = 1;
+                    }
+                } else if (index <= days && currentMonth) { //current month
+                    dayNumber = new JLabel(String.valueOf(index));
+                    temp.add(dayNumber, c1);
+                    index++;
+                    if (index > days) {
+                        currentMonth = false;
+                        nextMonth = true;
+                        index = 1;
+                    }
+                } else if (nextMonth) {
+                    temp.setBackground(Color.gray);
                     dayNumber = new JLabel(String.valueOf(index));
                     temp.add(dayNumber, c1);
                     index++;
                 }
-                temp.setBorder(BorderFactory.createLineBorder(Color.black));
+
+                if (index == cal.DAY_OF_MONTH && monthDif==0) {
+//                    temp.setBorder(BorderFactory.createLineBorder(Color.red));
+                    temp.setBackground(Color.decode("#FFA591"));
+                } else {
+                    temp.setBorder(BorderFactory.createLineBorder(Color.black));
+                }
                 calendar.add(temp, c);
             }
         }
-        c.ipadx=0;
-        c.ipady=0;
-        c.anchor = GridBagConstraints.CENTER;
-        c.weighty=0;
-        c.weightx=0;
-        c.insets= new Insets(15,15,15,15);
-        c.gridy=0;
-        c.gridx=0;
-        JButton left = new JButton("Previous Month");
-        left.addActionListener(e -> {monthDif--; initializeCalendar();});
-        calendar.add(left,c);
-        JButton right = new JButton("Next Month");
-        right.addActionListener(e -> {monthDif++; initializeCalendar();});
-        c.gridx=6;
-        calendar.add(right,c);
-
-    }
-}
+                c.ipadx = 0;
+                c.ipady = 0;
+                c.anchor = GridBagConstraints.CENTER;
+                c.weighty = 0;
+                c.weightx = 0;
+                c.insets = new Insets(15, 15, 15, 15);
+                c.gridy = 0;
+                c.gridx = 0;
+                JButton left = new JButton("Previous Month");
+                left.addActionListener(e -> {
+                    monthDif--;
+                    initializeCalendar();
+                });
+                calendar.add(left, c);
+                JButton right = new JButton("Next Month");
+                right.addActionListener(e -> {
+                    monthDif++;
+                    initializeCalendar();
+                });
+                c.gridx = 6;
+                calendar.add(right, c);
+            }
+            /*public static void initializeCal(){
+                cal = Calendar.getInstance();
+                cal.set(MONTH,cal.get(MONTH)+monthDif);
+            }*/
+        }
