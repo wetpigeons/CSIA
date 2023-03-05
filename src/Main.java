@@ -7,13 +7,17 @@ import java.util.*;
 import static java.util.Calendar.MONTH;
 
 public class Main {
-    static JFrame frame;
+    static JFrame frame = new JFrame();
     static JPanel calendar;
     static JPanel toDo;
     static JPanel workouts;
     static JTabbedPane tabs;
     static Calendar cal;
     static int monthDif = 0;
+    static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    static int width = (int)screenSize.getWidth();
+    static int height = (int)screenSize.getHeight();
+
 
     public static void main(String[] args) {
 
@@ -23,29 +27,13 @@ public class Main {
         --To-Do is a checklist, customizable
         --Workouts can save different swing text boxes or something, clicking a workout will change the visible text box - maybe scrollable list on left, text on right
          */
-        frame = new JFrame();
-        initializeCalendar();
-
-        toDo = new JPanel();
-        workouts = new JPanel();
-        tabs = new JTabbedPane();
-
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(1000, 1000);
-        frame.add(tabs);
-
-        tabs.addTab("Calendar", calendar);
-        tabs.addTab("To-Do List", toDo);
-        tabs.addTab("Saved Workouts", workouts);
-
-        frame.setVisible(true);
+        initializeFrame();
 
     }
 
     public static void initializeCalendar() {
         calendar = new JPanel(new GridBagLayout());
-//        initializeCal();
-        cal = Calendar.getInstance();
+        initializeCal();
         JPanel temp;
         GridBagConstraints c = new GridBagConstraints();
         GridBagConstraints c1 = new GridBagConstraints();
@@ -55,15 +43,15 @@ public class Main {
         temp.add(month);
         temp.setBorder(BorderFactory.createLineBorder(Color.black));
 
-        c.ipady = 50;
+        c.ipady = 35;
         c.fill = GridBagConstraints.BOTH;
         c.gridx = 1;
         c.gridwidth = 5;
         calendar.add(temp, c); //Month
 
         c.gridwidth = 1;
-        c.ipady = 20;
-        c.ipadx = 100;
+        c.ipady = 15;
+        c.ipadx = 80;
         c.gridy = 1;
         for (int i = 0; i < 7; i++) { //Days of the week
             cal.set(Calendar.DAY_OF_WEEK, i + 1);
@@ -76,19 +64,19 @@ public class Main {
         }
         cal.set(Calendar.DAY_OF_MONTH, 1);
         int startIndex = cal.get(Calendar.DAY_OF_WEEK);
-        cal = Calendar.getInstance();
+        initializeCal();
 
         int days = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
         cal.set(MONTH, cal.get(MONTH) - 1);
         int daysOfPrevious = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-        cal = Calendar.getInstance();
+        initializeCal();
 
         JLabel dayNumber;
         int index = daysOfPrevious - startIndex + 2;
 
-        c.ipady = 100;
-        c.ipadx = 100;
+        c.ipady = 70;
+        c.ipadx = 70;
         c.anchor = GridBagConstraints.CENTER;
 
         c1.ipadx = 0;
@@ -152,19 +140,43 @@ public class Main {
                 JButton left = new JButton("Previous Month");
                 left.addActionListener(e -> {
                     monthDif--;
-                    initializeCalendar();
+                    initializeFrame();
                 });
                 calendar.add(left, c);
                 JButton right = new JButton("Next Month");
                 right.addActionListener(e -> {
                     monthDif++;
-                    initializeCalendar();
+                    initializeFrame();
                 });
                 c.gridx = 6;
                 calendar.add(right, c);
+                System.out.println(monthDif);
             }
-            /*public static void initializeCal(){
+
+            public static void initializeCal(){
                 cal = Calendar.getInstance();
                 cal.set(MONTH,cal.get(MONTH)+monthDif);
-            }*/
+                System.out.println(cal.get(MONTH));
+            }
+            public static void initializeFrame(){
+                frame.setVisible(false);
+                frame.removeAll();
+                frame = new JFrame();
+                initializeCalendar();
+
+                toDo = new JPanel();
+                workouts = new JPanel();
+                tabs = new JTabbedPane();
+
+                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                frame.setSize(width, height);
+
+                frame.add(tabs);
+
+                tabs.addTab("Calendar", calendar);
+                tabs.addTab("To-Do List", toDo);
+                tabs.addTab("Saved Workouts", workouts);
+
+                frame.setVisible(true);
+            }
         }
