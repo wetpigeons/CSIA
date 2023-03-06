@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.util.*;
 
 public class Main {
@@ -9,6 +10,8 @@ public class Main {
     static JPanel toDo;
     static JPanel workouts;
     static JTabbedPane tabs;
+    static JLabel events;
+    static Hover hover;
     static Calendar cal;
     static int monthDif = 0;
     static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -17,7 +20,7 @@ public class Main {
     static ArrayList<Item> items = new ArrayList<>();
 
     public static void main(String[] args) {
-        items.add(new Item(3,15,2023,"test","test"));
+        items.add(new Item(3,15,2023,"test","test description!!!!"));
         /*
         --Tabs at top: Calendar, To-Do, Workouts
         -- Calendar has clickable items (links?) to to-do or workouts
@@ -130,7 +133,10 @@ public class Main {
                 }
                 for(Item p: items){
                     if((p.day == index-1 && p.month == cal.get(Calendar.MONTH)+1) && p.year == cal.get(Calendar.YEAR)){
-                        temp.add(new JLabel(p.event),c2);
+                        events = new JLabel(p.event);
+                        hover = new Hover(p.description,p.event);
+                        events.addMouseListener(hover);
+                        temp.add(events,c2);
                     }
                 }
                 calendar.add(temp, c);
@@ -175,6 +181,7 @@ public class Main {
         newEvent.setSize(350,180);
         newEvent.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         newEvent.setLocationRelativeTo(null);
+        newEvent.setTitle("Create New Event");
         JButton create = new JButton("Create New Event");
         JButton cancel = new JButton("Cancel");
         SpinnerModel dayModel = new SpinnerNumberModel(dayNumber,1,31,1);
