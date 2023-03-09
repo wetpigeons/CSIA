@@ -1,6 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseListener;
+import java.io.*;
 import java.util.*;
 
 public class Main {
@@ -18,15 +18,16 @@ public class Main {
     static int width = (int) screenSize.getWidth();
     static int height = (int) screenSize.getHeight();
     static ArrayList<Item> items = new ArrayList<>();
+    static Item item;
 
-    public static void main(String[] args) {
-        items.add(new Item(3,15,2023,"test","test description!!!!"));
+    public static void main(String[] args) throws IOException {
         /*
         --Tabs at top: Calendar, To-Do, Workouts
         -- Calendar has clickable items (links?) to to-do or workouts
         --To-Do is a checklist, customizable
         --Workouts can save different swing text boxes or something, clicking a workout will change the visible text box - maybe scrollable list on left, text on right
          */
+        read(items);
         initializeNewEvent();
         initializeFrame();
 
@@ -38,7 +39,7 @@ public class Main {
         JPanel temp;
         GridBagConstraints c = new GridBagConstraints();
         GridBagConstraints c1 = new GridBagConstraints();
-        GridBagConstraints c2= new GridBagConstraints();
+        GridBagConstraints c2 = new GridBagConstraints();
 
         temp = new JPanel();
         JLabel month = new JLabel(cal.getDisplayName(Calendar.MONTH, 2, Locale.US));
@@ -88,8 +89,8 @@ public class Main {
         c1.anchor = GridBagConstraints.FIRST_LINE_START;
 
         c2.anchor = GridBagConstraints.FIRST_LINE_START;
-        c2.weightx=0.8;
-        c2.weighty=0.8;
+        c2.weightx = 0.8;
+        c2.weighty = 0.8;
 
         boolean prevMonth = true;
         boolean currentMonth = false;
@@ -131,12 +132,12 @@ public class Main {
                 } else {
                     temp.setBorder(BorderFactory.createLineBorder(Color.black));
                 }
-                for(Item p: items){
-                    if((p.day == index-1 && p.month == cal.get(Calendar.MONTH)+1) && p.year == cal.get(Calendar.YEAR)){
+                for (Item p : items) {
+                    if ((p.day == index - 1 && p.month == cal.get(Calendar.MONTH) + 1) && p.year == cal.get(Calendar.YEAR)) {
                         events = new JLabel(p.event);
-                        hover = new Hover(p.description,p.event);
+                        hover = new Hover(p.description, p.event);
                         events.addMouseListener(hover);
-                        temp.add(events,c2);
+                        temp.add(events, c2);
                     }
                 }
                 calendar.add(temp, c);
@@ -178,15 +179,15 @@ public class Main {
         int monthNumber = today.get(Calendar.MONTH);
 
         newEvent = new JFrame();
-        newEvent.setSize(350,180);
+        newEvent.setSize(350, 180);
         newEvent.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         newEvent.setLocationRelativeTo(null);
         newEvent.setTitle("Create New Event");
         JButton create = new JButton("Create New Event");
         JButton cancel = new JButton("Cancel");
-        SpinnerModel dayModel = new SpinnerNumberModel(dayNumber,1,31,1);
-        SpinnerModel monthModel = new SpinnerNumberModel(monthNumber+1,1,12,1);
-        SpinnerModel yearModel = new SpinnerNumberModel(yearNumber,yearNumber-100,yearNumber+100,1);
+        SpinnerModel dayModel = new SpinnerNumberModel(dayNumber, 1, 31, 1);
+        SpinnerModel monthModel = new SpinnerNumberModel(monthNumber + 1, 1, 12, 1);
+        SpinnerModel yearModel = new SpinnerNumberModel(yearNumber, yearNumber - 100, yearNumber + 100, 1);
         JSpinner year = new JSpinner(yearModel);
         JSpinner month = new JSpinner(monthModel);
         JSpinner day = new JSpinner(dayModel);
@@ -195,12 +196,22 @@ public class Main {
         JLabel dayLabel = new JLabel("Day:");
         JLabel eventLabel = new JLabel("Event Name:");
         JLabel descriptionLabel = new JLabel("Description: ");
-        JTextField event = new JTextField("",20);
-        JTextArea description = new JTextArea("",3,20);
+        JTextField event = new JTextField("", 20);
+        JTextArea description = new JTextArea("", 3, 20);
         JPanel newEventPanel = new JPanel();
 
         cancel.addActionListener(e -> newEvent.setVisible(false));
-        create.addActionListener(e -> items.add(new Item((int)month.getValue(),(int)day.getValue(),(int)year.getValue(),event.getText(),description.getText())));
+        create.addActionListener(e -> {
+            item = new Item((int) month.getValue(), (int) day.getValue(), (int) year.getValue(), event.getText(), description.getText());
+            items.add(item);
+            try {
+                write(item);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            newEvent.setVisible(false);
+            initializeFrame();
+        });
         newEventPanel.add(monthLabel);
         newEventPanel.add(month);
         newEventPanel.add(dayLabel);
@@ -215,7 +226,8 @@ public class Main {
         newEventPanel.add(create);
         newEvent.add(newEventPanel);
     }
-    public static void createNewEvent(){
+
+    public static void createNewEvent() {
         newEvent.setVisible(true);
     }
 
@@ -245,4 +257,35 @@ public class Main {
 
         frame.setVisible(true);
     }
-}
+
+    public static void write(Item item) throws IOException {
+        FileWriter writer = new FileWriter("src/UserData", true);
+        writer.append(item.month + "\n" + item.day + "\n" + item.year + "\n" + item.event + "\n" + item.description + "\n");
+        writer.close();
+
+    }
+
+    public static void read(ArrayList<Item> items) throws IOException {
+        int counter = 1;
+        int month = 0;
+        int day = 0;
+        int year = 0;
+        String event = "";
+        String description = "";
+        FileReader reader = new FileReader("src/UserData");
+        BufferedReader breader = new BufferedReader(reader);
+        String str = "";
+        while ((str = breader.readLine()) != null) {
+            if(counter ==1)  month = Integer.valueOf(str);
+            if(counter==2)  day = Integer.valueOf(str);
+            if(counter ==3) year = Integer.valueOf(str);
+            if(counter==4) event = str;
+            if(counter==5) description = str;
+            if(counter <5) counter++;
+            else {
+                items.add(new Item(month,day,year,event,description));
+                counter = 1;
+            }
+            }
+        }
+    }

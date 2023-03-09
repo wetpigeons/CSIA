@@ -1,9 +1,9 @@
 public class Item {
-    public  int year;
-    public  int month;
+    public int year;
+    public int month;
     public int day;
-    public  String event;
-    public  String description;
+    public String event;
+    public String description;
 
     public Item(int month, int day, int year, String event, String description){
         this.month = month;
