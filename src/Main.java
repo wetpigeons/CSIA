@@ -92,6 +92,7 @@ public class Main {
         c2.weightx = 0.8;
         c2.weighty = 0.8;
 
+
         boolean prevMonth = true;
         boolean currentMonth = false;
         boolean nextMonth = false;
@@ -135,7 +136,7 @@ public class Main {
                 for (Item p : items) {
                     if ((p.day == index - 1 && p.month == cal.get(Calendar.MONTH) + 1) && p.year == cal.get(Calendar.YEAR)) {
                         events = new JLabel(p.event);
-                        hover = new Hover(p.description, p.event);
+                        hover = new Hover("Delete?", p.event);
                         events.addMouseListener(hover);
                         temp.add(events, c2);
                     }
@@ -179,7 +180,7 @@ public class Main {
         int monthNumber = today.get(Calendar.MONTH);
 
         newEvent = new JFrame();
-        newEvent.setSize(350, 180);
+        newEvent.setSize(350, 130);
         newEvent.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         newEvent.setLocationRelativeTo(null);
         newEvent.setTitle("Create New Event");
@@ -195,14 +196,12 @@ public class Main {
         JLabel monthLabel = new JLabel("Month:");
         JLabel dayLabel = new JLabel("Day:");
         JLabel eventLabel = new JLabel("Event Name:");
-        JLabel descriptionLabel = new JLabel("Description: ");
         JTextField event = new JTextField("", 20);
-        JTextArea description = new JTextArea("", 3, 20);
         JPanel newEventPanel = new JPanel();
 
         cancel.addActionListener(e -> newEvent.setVisible(false));
         create.addActionListener(e -> {
-            item = new Item((int) month.getValue(), (int) day.getValue(), (int) year.getValue(), event.getText(), description.getText());
+            item = new Item((int) month.getValue(), (int) day.getValue(), (int) year.getValue(), event.getText());
             items.add(item);
             try {
                 write(item);
@@ -220,8 +219,6 @@ public class Main {
         newEventPanel.add(year);
         newEventPanel.add(eventLabel);
         newEventPanel.add(event);
-        newEventPanel.add(descriptionLabel);
-        newEventPanel.add(description);
         newEventPanel.add(cancel);
         newEventPanel.add(create);
         newEvent.add(newEventPanel);
@@ -260,9 +257,37 @@ public class Main {
 
     public static void write(Item item) throws IOException {
         FileWriter writer = new FileWriter("src/UserData", true);
-        writer.append(item.month + "\n" + item.day + "\n" + item.year + "\n" + item.event + "\n" + item.description + "\n");
+        writer.append(item.month + "\n" + item.day + "\n" + item.year + "\n" + item.event + "\n");
         writer.close();
+    }
 
+    public static void deleteEvent(String label) throws IOException {
+        FileReader reader = new FileReader("src/UserData/");
+        BufferedReader breader = new BufferedReader(reader);
+        StringBuilder str = new StringBuilder();
+        String s = "";
+        String string = "";
+        while ((s = breader.readLine()) != null) {
+            str.append(s+"\n");
+        }
+        System.out.println((str));
+        for (Item i : items) {
+            if (i.event == label) {
+                String day = String.valueOf(i.day);
+                System.out.println(day);
+                String month = String.valueOf(i.month);
+                System.out.println(month);
+                String year = String.valueOf(i.year);
+                System.out.println(year);
+                string = str.toString().replaceAll(month + "\n" + day + "\n" + year + "\n" + label + "\n", "");
+                System.out.println(string);
+                break;
+            }
+        }
+        System.out.println(string);
+        FileWriter writer = new FileWriter("src/UserData/", false);
+        writer.write(string);
+        writer.close();
     }
 
     public static void read(ArrayList<Item> items) throws IOException {
@@ -271,7 +296,6 @@ public class Main {
         int day = 0;
         int year = 0;
         String event = "";
-        String description = "";
         FileReader reader = new FileReader("src/UserData");
         BufferedReader breader = new BufferedReader(reader);
         String str = "";
@@ -280,10 +304,9 @@ public class Main {
             if(counter==2)  day = Integer.valueOf(str);
             if(counter ==3) year = Integer.valueOf(str);
             if(counter==4) event = str;
-            if(counter==5) description = str;
-            if(counter <5) counter++;
+            if(counter <4) counter++;
             else {
-                items.add(new Item(month,day,year,event,description));
+                items.add(new Item(month,day,year,event));
                 counter = 1;
             }
             }

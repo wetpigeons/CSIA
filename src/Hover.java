@@ -1,8 +1,9 @@
 import java.awt.Color; //Credit to TabsPH on github
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
-import javax.swing.JLabel;
+import javax.swing.*;
 
 public class Hover extends MouseAdapter {
 
@@ -26,5 +27,18 @@ public class Hover extends MouseAdapter {
         JLabel lbl = (JLabel) e.getComponent();
         lbl.setText( String.format( "<html>%s</html>", orgStr ) );
         lbl.setForeground( new Color(0, 0, 0) );
+    }
+    @Override
+    public void mouseClicked(MouseEvent e){
+        JLabel lbl = (JLabel) e.getComponent();
+        JPanel parent = (JPanel) lbl.getParent();
+        parent.remove(lbl);
+        parent.revalidate();
+        parent.repaint();
+        try {
+            Main.deleteEvent(orgStr);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }
