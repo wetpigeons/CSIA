@@ -9,7 +9,6 @@ public class Main {
     static JPanel calendar;
     static JPanel toDo;
     static JPanel workouts;
-    static JTabbedPane tabs;
     static JLabel events;
     static Hover hover;
     static Calendar cal;
