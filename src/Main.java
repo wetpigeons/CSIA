@@ -21,18 +21,10 @@ public class Main {
     static Item item;
 
     public static void main(String[] args) throws IOException {
-        /*
-        --Tabs at top: Calendar, To-Do, Workouts
-        -- Calendar has clickable items (links?) to to-do or workouts
-        --To-Do is a checklist, customizable
-        --Workouts can save different swing text boxes or something, clicking a workout will change the visible text box - maybe scrollable list on left, text on right
-         */
         read(items);
         initializeNewEvent();
         initializeFrame();
-
     }
-
     public static void initializeCalendar() {
         calendar = new JPanel(new GridBagLayout());
         initializeCal();
@@ -92,7 +84,6 @@ public class Main {
         c2.weightx = 0.8;
         c2.weighty = 0.8;
 
-
         boolean prevMonth = true;
         boolean currentMonth = false;
         boolean nextMonth = false;
@@ -127,7 +118,6 @@ public class Main {
                     temp.add(dayNumber, c1);
                     index++;
                 }
-
                 if (index == Calendar.DAY_OF_MONTH && monthDif == 0) {
                     temp.setBackground(Color.decode("#FFA591"));
                 } else {
@@ -241,16 +231,11 @@ public class Main {
 
         toDo = new JPanel();
         workouts = new JPanel();
-        tabs = new JTabbedPane();
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(width, height);
-
-        frame.add(tabs);
-
-        tabs.addTab("Calendar", calendar);
-        tabs.addTab("To-Do List", toDo);
-        tabs.addTab("Saved Workouts", workouts);
+        frame.add(calendar);
+        frame.setTitle("Calendar");
 
         frame.setVisible(true);
     }
@@ -309,6 +294,6 @@ public class Main {
                 items.add(new Item(month,day,year,event));
                 counter = 1;
             }
-            }
         }
     }
+}
