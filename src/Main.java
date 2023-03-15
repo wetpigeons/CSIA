@@ -97,39 +97,57 @@ public class Main {
                     currentMonth = true;
                     index = 1;
                 } else if (index <= daysOfPrevious && prevMonth) { //previous month
-                    temp.setBackground(Color.gray);
+                    temp.setBackground(Color.lightGray);
                     dayNumber = new JLabel(String.valueOf(index));
                     temp.add(dayNumber, c1);
                     index++;
+                    for (Item p : items) {
+                        if ((p.day == index - 1 && p.month == cal.get(Calendar.MONTH)) && p.year == cal.get(Calendar.YEAR)) {
+                            events = new JLabel(p.event);
+                            hover = new Hover("Delete?", p.event);
+                            events.addMouseListener(hover);
+                            temp.add(events, c2);
+                        }
+                    }
                 }
                 if (index <= days && currentMonth) { //current month
                     dayNumber = new JLabel(String.valueOf(index));
                     temp.add(dayNumber, c1);
                     index++;
+                    for (Item p : items) {
+                        if ((p.day == index - 1 && p.month == cal.get(Calendar.MONTH) + 1) && p.year == cal.get(Calendar.YEAR)) {
+                            events = new JLabel(p.event);
+                            hover = new Hover("Delete?", p.event);
+                            events.addMouseListener(hover);
+                            temp.add(events, c2);
+                        }
+                    }
                     if (index > days) {
                         currentMonth = false;
                         nextMonth = true;
                         index = 1;
                     }
                 } else if (nextMonth) {
-                    temp.setBackground(Color.gray);
+                    temp.setBackground(Color.lightGray);
                     dayNumber = new JLabel(String.valueOf(index));
                     temp.add(dayNumber, c1);
                     index++;
+                    for (Item p : items) {
+                        if ((p.day == index - 1 && p.month == cal.get(Calendar.MONTH) + 2) && p.year == cal.get(Calendar.YEAR)) {
+                            events = new JLabel(p.event);
+                            hover = new Hover("Delete?", p.event);
+                            events.addMouseListener(hover);
+                            temp.add(events, c2);
+                        }
+                    }
                 }
-                if (index == Calendar.DAY_OF_MONTH && monthDif == 0) {
+                if (index == cal.get(Calendar.DAY_OF_MONTH)+1 && monthDif == 0) {
+                    System.out.println(index);
                     temp.setBackground(Color.decode("#FFA591"));
                 } else {
                     temp.setBorder(BorderFactory.createLineBorder(Color.black));
                 }
-                for (Item p : items) {
-                    if ((p.day == index - 1 && p.month == cal.get(Calendar.MONTH) + 1) && p.year == cal.get(Calendar.YEAR)) {
-                        events = new JLabel(p.event);
-                        hover = new Hover("Delete?", p.event);
-                        events.addMouseListener(hover);
-                        temp.add(events, c2);
-                    }
-                }
+
                 calendar.add(temp, c);
             }
         } //grids
