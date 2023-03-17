@@ -20,11 +20,24 @@ public class Main {
     static Item item;
 
     public static void main(String[] args) throws IOException {
+        frame = new JFrame();
+        initializeCalendar();
+
+        toDo = new JPanel();
+        workouts = new JPanel();
+
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(width, height);
+        frame.add(calendar);
+        frame.setTitle("Calendar");
+
+        frame.setVisible(true);
+        
         read(items);
         initializeNewEvent();
-        initializeFrame();
     }
     public static void initializeCalendar() {
+        frame.removeAll();
         calendar = new JPanel(new GridBagLayout());
         initializeCal();
         JPanel temp;
@@ -162,13 +175,13 @@ public class Main {
         JButton left = new JButton("Previous Month");
         left.addActionListener(e -> {
             monthDif--;
-            initializeFrame();
+            initializeCalendar();
         });
         calendar.add(left, c);
         JButton right = new JButton("Next Month");
         right.addActionListener(e -> {
             monthDif++;
-            initializeFrame();
+            initializeCalendar();
         });
         c.gridx = 6;
         calendar.add(right, c);
@@ -178,6 +191,8 @@ public class Main {
         JButton newEvent = new JButton("Create New Event");
         calendar.add(newEvent, c);
         newEvent.addActionListener(e -> createNewEvent());
+        frame.revalidate();
+        frame.repaint();
     }
 
     public static void initializeNewEvent() {
@@ -216,7 +231,7 @@ public class Main {
                 throw new RuntimeException(ex);
             }
             newEvent.setVisible(false);
-            initializeFrame();
+            initializeCalendar();
         });
         newEventPanel.add(monthLabel);
         newEventPanel.add(month);
