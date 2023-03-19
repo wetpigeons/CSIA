@@ -19,14 +19,19 @@ public class Hover extends MouseAdapter {
     public void mouseEntered(MouseEvent e) {
         JLabel lbl = (JLabel) e.getComponent();
         lbl.setForeground(new Color(255, 127, 80));
-        lbl.setText( String.format( "<html><u>%s</u></html>", lblStr) );
+        lbl.setText( String.format( "<html><u>%s</u></html>", lblStr));
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         JLabel lbl = (JLabel) e.getComponent();
-        lbl.setText( String.format( "<html>%s</html>", orgStr ) );
         lbl.setForeground( new Color(0, 0, 0) );
+        int length = orgStr.length();
+        if(length>10){
+            lbl.setText( String.format( "<html>%s</html>", orgStr.substring(0,9)+"..."));
+        } else {
+            lbl.setText(String.format("<html>%s</html>", orgStr));
+        }
     }
     @Override
     public void mouseClicked(MouseEvent e){

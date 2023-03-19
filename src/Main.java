@@ -90,8 +90,10 @@ public class Main {
         c1.anchor = GridBagConstraints.FIRST_LINE_START;
 
         c2.anchor = GridBagConstraints.FIRST_LINE_START;
-        c2.weightx = 0.9;
-        c2.weighty = 0;
+        c2.fill = GridBagConstraints.NONE;
+        c2.weightx = 0.5;
+        c2.weighty = 0.9;
+        c2.gridy= 0;
 
         boolean prevMonth = true;
         boolean currentMonth = false;
@@ -102,6 +104,7 @@ public class Main {
             for (int i = 0; i < 7; i++) { //Days - columns
                 c.gridx = i;
                 temp = new JPanel(new GridBagLayout());
+
                 if (index > daysOfPrevious && prevMonth) {
                     prevMonth = false;
                     currentMonth = true;
@@ -112,26 +115,40 @@ public class Main {
                     temp.add(dayNumber, c1);
                     index++;
                     for (Item p : items) {
+                        int length = p.event.length();
                         if ((p.day == index - 1 && p.month == cal.get(Calendar.MONTH)) && p.year == cal.get(Calendar.YEAR)) {
-                            events = new JLabel(p.event);
+                            if(length>10){
+                                events = new JLabel(p.event.substring(0,9)+"...");
+                            } else {
+                                events = new JLabel(p.event);
+                            }
                             hover = new Hover("Delete?", p.event);
                             events.addMouseListener(hover);
                             temp.add(events, c2);
+                            c2.gridy++;
                         }
                     }
+                    c2.gridy=0;
                 }
                 if (index <= days && currentMonth) { //current month
                     dayNumber = new JLabel(String.valueOf(index));
                     temp.add(dayNumber, c1);
                     index++;
                     for (Item p : items) {
+                        int length = p.event.length();
                         if ((p.day == index - 1 && p.month == cal.get(Calendar.MONTH) + 1) && p.year == cal.get(Calendar.YEAR)) {
-                            events = new JLabel(p.event);
+                            if(length>10){
+                                events = new JLabel(p.event.substring(0,9)+"...");
+                            } else {
+                                events = new JLabel(p.event);
+                            }
                             hover = new Hover("Delete?", p.event);
                             events.addMouseListener(hover);
                             temp.add(events, c2);
+                            c2.gridy++;
                         }
                     }
+                    c2.gridy=0;
                     if (index > days) {
                         currentMonth = false;
                         nextMonth = true;
@@ -143,13 +160,20 @@ public class Main {
                     temp.add(dayNumber, c1);
                     index++;
                     for (Item p : items) {
+                        int length = p.event.length();
                         if ((p.day == index - 1 && p.month == cal.get(Calendar.MONTH) + 2) && p.year == cal.get(Calendar.YEAR)) {
-                            events = new JLabel(p.event);
+                            if(length>10){
+                                events = new JLabel(p.event.substring(0,9)+"...");
+                            } else {
+                                events = new JLabel(p.event);
+                            }
                             hover = new Hover("Delete?", p.event);
                             events.addMouseListener(hover);
                             temp.add(events, c2);
+                            c2.gridy++;
                         }
                     }
+                    c2.gridy=0;
                 }
                 if (index == cal.get(Calendar.DAY_OF_MONTH)+1 && monthDif == 0) {
                     temp.setBackground(Color.decode("#FFA591"));
@@ -168,7 +192,7 @@ public class Main {
         c.insets = new Insets(15, 15, 15, 15);
         c.gridy = 0;
         c.gridx = 0;
-        JButton left = new JButton("Previous Month");
+        JButton left = new JButton("Prev. Month");
         left.addActionListener(e -> {
             monthDif--;
             initializeCalendar();
@@ -184,7 +208,7 @@ public class Main {
 
         c.gridx = 0;
         c.gridy = 7;
-        JButton newEvent = new JButton("Create New Event");
+        JButton newEvent = new JButton("New Event");
         calendar.add(newEvent, c);
         newEvent.addActionListener(e -> createNewEvent());
         calendar.revalidate();
