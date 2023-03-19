@@ -90,8 +90,8 @@ public class Main {
         c1.anchor = GridBagConstraints.FIRST_LINE_START;
 
         c2.anchor = GridBagConstraints.FIRST_LINE_START;
-        c2.weightx = 0.8;
-        c2.weighty = 0.8;
+        c2.weightx = 0.9;
+        c2.weighty = 0;
 
         boolean prevMonth = true;
         boolean currentMonth = false;
@@ -153,6 +153,7 @@ public class Main {
                 }
                 if (index == cal.get(Calendar.DAY_OF_MONTH)+1 && monthDif == 0) {
                     temp.setBackground(Color.decode("#FFA591"));
+                    temp.setBorder(BorderFactory.createLineBorder(Color.black));
                 } else {
                     temp.setBorder(BorderFactory.createLineBorder(Color.black));
                 }
@@ -287,6 +288,7 @@ public class Main {
     }
 
     public static void read(ArrayList<Item> items) throws IOException {
+        items.removeAll(items);
         int counter = 1;
         int month = 0;
         int day = 0;
@@ -306,5 +308,6 @@ public class Main {
                 counter = 1;
             }
         }
+        System.out.println(items);
     }
 }
