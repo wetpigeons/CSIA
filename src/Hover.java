@@ -33,12 +33,12 @@ public class Hover extends MouseAdapter {
         JLabel lbl = (JLabel) e.getComponent();
         JPanel parent = (JPanel) lbl.getParent();
         parent.remove(lbl);
-        parent.revalidate();
-        parent.repaint();
         try {
             Main.deleteEvent(orgStr);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+        parent.revalidate();
+        parent.repaint();
     }
 }

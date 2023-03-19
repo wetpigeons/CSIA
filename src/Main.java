@@ -20,12 +20,22 @@ public class Main {
     static Item item;
 
     public static void main(String[] args) throws IOException {
+        frame = new JFrame();
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(width, height);
+        frame.setTitle("Calendar");
+
+        toDo = new JPanel();
+        workouts = new JPanel();
+        calendar = new JPanel(new GridBagLayout());
         read(items);
+        initializeCalendar();
         initializeNewEvent();
-        initializeFrame();
+        frame.add(calendar);
+        frame.setVisible(true);
     }
     public static void initializeCalendar() {
-        calendar = new JPanel(new GridBagLayout());
+        calendar.removeAll();
         initializeCal();
         JPanel temp;
         GridBagConstraints c = new GridBagConstraints();
@@ -33,7 +43,7 @@ public class Main {
         GridBagConstraints c2 = new GridBagConstraints();
 
         temp = new JPanel();
-        JLabel month = new JLabel(cal.getDisplayName(Calendar.MONTH, 2, Locale.US));
+        JLabel month = new JLabel(cal.getDisplayName(Calendar.MONTH, 2, Locale.US) + " - " + cal.get(Calendar.YEAR));
         temp.add(month);
         temp.setBorder(BorderFactory.createLineBorder(Color.black));
 
@@ -80,8 +90,8 @@ public class Main {
         c1.anchor = GridBagConstraints.FIRST_LINE_START;
 
         c2.anchor = GridBagConstraints.FIRST_LINE_START;
-        c2.weightx = 0.8;
-        c2.weighty = 0.8;
+        c2.weightx = 0.9;
+        c2.weighty = 0;
 
         boolean prevMonth = true;
         boolean currentMonth = false;
@@ -142,12 +152,11 @@ public class Main {
                     }
                 }
                 if (index == cal.get(Calendar.DAY_OF_MONTH)+1 && monthDif == 0) {
-                    System.out.println(index);
                     temp.setBackground(Color.decode("#FFA591"));
+                    temp.setBorder(BorderFactory.createLineBorder(Color.black));
                 } else {
                     temp.setBorder(BorderFactory.createLineBorder(Color.black));
                 }
-
                 calendar.add(temp, c);
             }
         } //grids
@@ -162,13 +171,13 @@ public class Main {
         JButton left = new JButton("Previous Month");
         left.addActionListener(e -> {
             monthDif--;
-            initializeFrame();
+            initializeCalendar();
         });
         calendar.add(left, c);
         JButton right = new JButton("Next Month");
         right.addActionListener(e -> {
             monthDif++;
-            initializeFrame();
+            initializeCalendar();
         });
         c.gridx = 6;
         calendar.add(right, c);
@@ -178,6 +187,8 @@ public class Main {
         JButton newEvent = new JButton("Create New Event");
         calendar.add(newEvent, c);
         newEvent.addActionListener(e -> createNewEvent());
+        calendar.revalidate();
+        calendar.repaint();
     }
 
     public static void initializeNewEvent() {
@@ -216,7 +227,7 @@ public class Main {
                 throw new RuntimeException(ex);
             }
             newEvent.setVisible(false);
-            initializeFrame();
+            initializeCalendar();
         });
         newEventPanel.add(monthLabel);
         newEventPanel.add(month);
@@ -238,23 +249,6 @@ public class Main {
     public static void initializeCal() {
         cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, cal.get(Calendar.MONTH) + monthDif);
-    }
-
-    public static void initializeFrame() {
-        frame.setVisible(false);
-        frame.removeAll();
-        frame = new JFrame();
-        initializeCalendar();
-
-        toDo = new JPanel();
-        workouts = new JPanel();
-
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setSize(width, height);
-        frame.add(calendar);
-        frame.setTitle("Calendar");
-
-        frame.setVisible(true);
     }
 
     public static void write(Item item) throws IOException {
@@ -290,9 +284,11 @@ public class Main {
         FileWriter writer = new FileWriter("src/UserData/", false);
         writer.write(string);
         writer.close();
+        read(items);
     }
 
     public static void read(ArrayList<Item> items) throws IOException {
+        items.removeAll(items);
         int counter = 1;
         int month = 0;
         int day = 0;
@@ -312,5 +308,6 @@ public class Main {
                 counter = 1;
             }
         }
+        System.out.println(items);
     }
 }
